@@ -1,0 +1,16 @@
+# Archivos compilados
+*.class
+
+# Bases de datos SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Archivos del IDE (si usas VS Code, IntelliJ, etc)
+.vscode/
+.idea/
+*.iml
+
+# Archivos temporales de Windows
+Thumbs.db
+Desktop.ini
