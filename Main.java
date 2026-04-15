@@ -16,8 +16,7 @@ public class Main {
 
         // Lanzar la aplicacion en el hilo de Swing
         SwingUtilities.invokeLater(() -> {
-            PantallaLogin login = new PantallaLogin();
-            login.setVisible(true);
+            vista.GestorVentana.iniciar();
         });
     }
 }

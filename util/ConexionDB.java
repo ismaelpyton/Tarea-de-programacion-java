@@ -3,45 +3,47 @@ package util;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 /**
- * Clase para manejar la conexion a SQLite.
- * Patron Singleton: solo una instancia de conexion en toda la aplicacion.
+ * Clase para manejar la conexion a MySQL remota (Aiven Cloud).
+ * Patron Singleton con reconexion automatica si la conexion se pierde.
  */
 public class ConexionDB {
 
     private static ConexionDB instancia;
     private Connection conexion;
-    private static final String URL = "jdbc:sqlite:usuarios.db";
 
-    // Constructor privado (Singleton)
+    private static final String URL =
+        "jdbc:mysql://almacenitla-db-itla-3837.e.aivencloud.com:25037/almacenitlafinal" +
+        "?useSSL=true&autoReconnect=true&connectTimeout=10000&socketTimeout=30000";
+    private static final String USER = "avnadmin";
+    private static final String PASS = "AVNS_pPa2xcIg1UbjOzcsoMg";
+
     private ConexionDB() {
+        conectar();
+    }
+
+    private void conectar() {
         try {
-            // Fuerzo a cargar el Driver en memoria para evitar el error de Classpath en terminal
-            Class.forName("org.sqlite.JDBC");
-            
-            conexion = DriverManager.getConnection(URL);
-            crearTabla();
-            System.out.println("Conexion a SQLite establecida correctamente.");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conexion = DriverManager.getConnection(URL, USER, PASS);
+            System.out.println("Conexion a MySQL remota establecida correctamente.");
         } catch (ClassNotFoundException e) {
-            System.err.println("Error Critico: El conector sqlite-jdbc.jar no esta cargado en memoria.");
-            javax.swing.JOptionPane.showMessageDialog(null, 
-                "Error Fatal: No se encontro el controlador para la Base de Datos.\n" +
-                "Si esta corriendo desde la terminal PowerShell intente:\n" +
-                "java -cp '.;lib/sqlite-jdbc.jar' Main", 
+            System.err.println("Error Critico: El conector mysql-connector-j no esta en el classpath.");
+            javax.swing.JOptionPane.showMessageDialog(null,
+                "Error Fatal: No se encontro el controlador para MySQL.\n" +
+                "Ejecute la app con: java -cp \".;lib/mysql-connector-j.jar\" Main",
                 "Error de Base de Datos", javax.swing.JOptionPane.ERROR_MESSAGE);
-            System.exit(1); // Cierra la app porque no puede arrancar sin base de datos
+            System.exit(1);
         } catch (SQLException e) {
-            System.err.println("Error al conectar con la base de datos: " + e.getMessage());
-            javax.swing.JOptionPane.showMessageDialog(null, 
-                "No se pudo conectar a SQLite: " + e.getMessage(), 
+            System.err.println("Error al conectar con la DB remota: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(null,
+                "No se pudo conectar al servidor MySQL en la nube.\nVerifique su conexion a internet.",
                 "Error de Conexion", javax.swing.JOptionPane.ERROR_MESSAGE);
-            System.exit(1); 
+            System.exit(1);
         }
     }
 
-    // Metodo Singleton - obtener la unica instancia
     public static ConexionDB getInstancia() {
         if (instancia == null) {
             instancia = new ConexionDB();
@@ -49,24 +51,18 @@ public class ConexionDB {
         return instancia;
     }
 
+    /**
+     * Devuelve la conexion activa. Si la conexion se perdio, reconecta automaticamente.
+     */
     public Connection getConexion() {
-        return conexion;
-    }
-
-    // Crea la tabla si no existe
-    private void crearTabla() {
-        String sql = "CREATE TABLE IF NOT EXISTS usuarios ("
-                + "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + "nombre_usuario TEXT UNIQUE NOT NULL, "
-                + "nombre TEXT NOT NULL, "
-                + "apellido TEXT NOT NULL, "
-                + "telefono TEXT NOT NULL, "
-                + "correo TEXT NOT NULL, "
-                + "contrasena TEXT NOT NULL)";
-        try (Statement stmt = conexion.createStatement()) {
-            stmt.execute(sql);
+        try {
+            if (conexion == null || conexion.isClosed() || !conexion.isValid(3)) {
+                System.out.println("Conexion perdida. Reconectando...");
+                conectar();
+            }
         } catch (SQLException e) {
-            System.err.println("Error al crear la tabla: " + e.getMessage());
+            conectar();
         }
+        return conexion;
     }
 }

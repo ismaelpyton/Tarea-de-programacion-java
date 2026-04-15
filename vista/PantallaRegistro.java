@@ -12,7 +12,7 @@ import java.awt.*;
  * Pantalla de Registro - Permite crear una nueva cuenta de usuario.
  * Todos los campos son obligatorios. Las contrasenas se muestran ocultas.
  */
-public class PantallaRegistro extends JFrame {
+public class PantallaRegistro extends JPanel {
 
     private JTextField campoNombreUsuario;
     private JTextField campoNombre;
@@ -32,12 +32,12 @@ public class PantallaRegistro extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("Registro de Usuario");
-        setSize(520, 680);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
-        getContentPane().setBackground(EstiloUI.COLOR_FONDO);
+        //setTitle("Registro de Usuario");
+        //setSize(520, 760);
+        //setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        //setLocationRelativeTo(null);
+        //setResizable(false);
+        this.setBackground(EstiloUI.COLOR_FONDO);
     }
 
     private void inicializarComponentes() {
@@ -179,8 +179,8 @@ public class PantallaRegistro extends JFrame {
     }
 
     private void volverAlLogin() {
-        this.dispose();
+        //this.dispose();
         pantallaLogin.limpiarCampos();
-        pantallaLogin.setVisible(true);
+        GestorVentana.cambiarPantalla(pantallaLogin, "Iniciar Sesion", 400, 500);
     }
 }

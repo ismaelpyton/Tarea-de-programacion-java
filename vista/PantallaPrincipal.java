@@ -14,7 +14,7 @@ import java.util.List;
  * Pantalla Principal - Muestra la tabla de usuarios registrados.
  * Permite actualizar y eliminar usuarios, y cerrar sesion.
  */
-public class PantallaPrincipal extends JFrame {
+public class PantallaPrincipal extends JPanel {
 
     private JTable tablaUsuarios;
     private DefaultTableModel modeloTabla;
@@ -32,12 +32,12 @@ public class PantallaPrincipal extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("Panel Principal - Usuarios Registrados");
-        setSize(900, 580);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(true);
-        getContentPane().setBackground(EstiloUI.COLOR_FONDO);
+        //setTitle("Panel Principal - Usuarios Registrados");
+        //setSize(900, 580);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setLocationRelativeTo(null);
+        //setResizable(true);
+        this.setBackground(EstiloUI.COLOR_FONDO);
     }
 
     private void inicializarComponentes() {
@@ -98,7 +98,7 @@ public class PantallaPrincipal extends JFrame {
         botonNuevoUsuario = EstiloUI.crearBoton("Nuevo", EstiloUI.COLOR_EXITO, EstiloUI.COLOR_EXITO_OSC);
         botonActualizar = EstiloUI.crearBoton("Actualizar", EstiloUI.COLOR_PRIMARIO, EstiloUI.COLOR_PRIMARIO_OSC);
         botonEliminar = EstiloUI.crearBoton("Eliminar", EstiloUI.COLOR_ERROR, EstiloUI.COLOR_ERROR_OSC);
-        botonCerrarSesion = EstiloUI.crearBoton("Cerrar Sesion", new Color(149, 165, 166), new Color(127, 140, 141));
+        botonCerrarSesion = EstiloUI.crearBoton("Volver al Dashboard", Color.DARK_GRAY, Color.BLACK);
 
         panelBotones.add(botonNuevoUsuario);
         panelBotones.add(botonActualizar);
@@ -110,7 +110,7 @@ public class PantallaPrincipal extends JFrame {
         botonNuevoUsuario.addActionListener(e -> crearNuevoUsuario());
         botonActualizar.addActionListener(e -> actualizarUsuario());
         botonEliminar.addActionListener(e -> eliminarUsuario());
-        botonCerrarSesion.addActionListener(e -> cerrarSesion());
+        botonCerrarSesion.addActionListener(e -> volverDashboard());
     }
 
     /**
@@ -302,11 +302,10 @@ public class PantallaPrincipal extends JFrame {
     }
 
     /**
-     * Cierra sesion y vuelve a la pantalla de login.
+     * Vuelve al Dashboard.
      */
-    private void cerrarSesion() {
-        this.dispose();
-        PantallaLogin login = new PantallaLogin();
-        login.setVisible(true);
+    private void volverDashboard() {
+        //this.dispose();
+        GestorVentana.cambiarPantalla(new PantallaDashboard(usuarioActual), "Panel de Control", 500, 350);
     }
 }

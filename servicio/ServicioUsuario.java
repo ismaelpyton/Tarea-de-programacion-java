@@ -32,7 +32,7 @@ public class ServicioUsuario implements IServicioUsuario {
 
     @Override
     public boolean registrar(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (nombre_usuario, nombre, apellido, telefono, correo, contrasena) "
+        String sql = "INSERT INTO usuarios (UserName, Nombre, Apellido, Telefono, Email, Password) "
                    + "VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, usuario.getNombreUsuario());
@@ -44,14 +44,14 @@ public class ServicioUsuario implements IServicioUsuario {
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
-            System.err.println("Error al registrar usuario: " + e.getMessage());
+            System.err.println("Error al registrar usuario en la nube: " + e.getMessage());
             return false;
         }
     }
 
     @Override
     public Usuario autenticar(String nombreUsuario, String contrasena) {
-        String sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?";
+        String sql = "SELECT * FROM usuarios WHERE UserName = ? AND Password = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, nombreUsuario);
             ps.setString(2, contrasena);
@@ -68,7 +68,7 @@ public class ServicioUsuario implements IServicioUsuario {
     @Override
     public List<Usuario> obtenerTodos() {
         List<Usuario> usuarios = new ArrayList<>();
-        String sql = "SELECT * FROM usuarios ORDER BY id ASC";
+        String sql = "SELECT * FROM usuarios ORDER BY idUser ASC";
         try (Statement stmt = conexion.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -82,8 +82,8 @@ public class ServicioUsuario implements IServicioUsuario {
 
     @Override
     public boolean actualizar(Usuario usuario) {
-        String sql = "UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ?, "
-                   + "correo = ?, nombre_usuario = ?, contrasena = ? WHERE id = ?";
+        String sql = "UPDATE usuarios SET Nombre = ?, Apellido = ?, Telefono = ?, "
+                   + "Email = ?, UserName = ?, Password = ? WHERE idUser = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, usuario.getNombre());
             ps.setString(2, usuario.getApellido());
@@ -101,7 +101,7 @@ public class ServicioUsuario implements IServicioUsuario {
 
     @Override
     public boolean eliminar(int id) {
-        String sql = "DELETE FROM usuarios WHERE id = ?";
+        String sql = "DELETE FROM usuarios WHERE idUser = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setInt(1, id);
             return ps.executeUpdate() > 0;
@@ -113,7 +113,7 @@ public class ServicioUsuario implements IServicioUsuario {
 
     @Override
     public Usuario buscarPorUsuario(String nombreUsuario) {
-        String sql = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
+        String sql = "SELECT * FROM usuarios WHERE UserName = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, nombreUsuario);
             ResultSet rs = ps.executeQuery();
@@ -127,18 +127,18 @@ public class ServicioUsuario implements IServicioUsuario {
     }
 
     /**
-     * Mapea un ResultSet a un objeto Usuario.
+     * Mapea un ResultSet a un objeto Usuario usando los nombres de las columnas en MySQL remotas.
      */
     private Usuario mapearUsuario(ResultSet rs) throws SQLException {
         Usuario u = new Usuario(
-                rs.getString("nombre"),
-                rs.getString("apellido"),
-                rs.getString("telefono"),
-                rs.getString("correo"),
-                rs.getString("nombre_usuario"),
-                rs.getString("contrasena")
+                rs.getString("Nombre"),
+                rs.getString("Apellido"),
+                rs.getString("Telefono"),
+                rs.getString("Email"),
+                rs.getString("UserName"),
+                rs.getString("Password")
         );
-        u.setId(rs.getInt("id"));
+        u.setId(rs.getInt("idUser"));
         return u;
     }
 }

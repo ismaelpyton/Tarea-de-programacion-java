@@ -11,7 +11,7 @@ import java.awt.*;
  * Pantalla de Login - Ventana inicial de la aplicacion.
  * Permite ingresar con usuario y contrasena.
  */
-public class PantallaLogin extends JFrame {
+public class PantallaLogin extends JPanel {
 
     private JTextField campoUsuario;
     private JPasswordField campoContrasena;
@@ -24,12 +24,12 @@ public class PantallaLogin extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("Sistema de Gestion de Usuarios - Login");
-        setSize(480, 520);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setResizable(false);
-        getContentPane().setBackground(EstiloUI.COLOR_FONDO);
+        //setTitle("Sistema de Gestion de Usuarios - Login");
+        //setSize(480, 520);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setLocationRelativeTo(null);
+        //setResizable(false);
+        this.setBackground(EstiloUI.COLOR_FONDO);
     }
 
     private void inicializarComponentes() {
@@ -52,8 +52,8 @@ public class PantallaLogin extends JFrame {
         gc.fill = GridBagConstraints.HORIZONTAL;
         gc.gridwidth = GridBagConstraints.REMAINDER;
 
-        // Icono de usuario (emoji-like)
-        JLabel iconoUsuario = new JLabel("\u2B50", SwingConstants.CENTER);
+        // Icono de usuario (emoji-like removido)
+        JLabel iconoUsuario = new JLabel("", SwingConstants.CENTER);
         iconoUsuario.setFont(new Font("Segoe UI Emoji", Font.PLAIN, 48));
         iconoUsuario.setForeground(EstiloUI.COLOR_PRIMARIO);
         panelCentral.add(iconoUsuario, gc);
@@ -133,8 +133,8 @@ public class PantallaLogin extends JFrame {
         // Autenticar
         Usuario usuarioAutenticado = ServicioUsuario.getInstancia().autenticar(usuario, contrasena);
         if (usuarioAutenticado != null) {
-            this.dispose(); // Cierra la ventana de login
-            new PantallaPrincipal(usuarioAutenticado).setVisible(true);
+            //this.dispose(); // Cierra la ventana de login
+            GestorVentana.cambiarPantalla(new PantallaDashboard(usuarioAutenticado), "Panel de Control", 500, 350);
         } else {
             JOptionPane.showMessageDialog(this,
                     "Usuario o contrasena incorrectos.",
@@ -145,7 +145,7 @@ public class PantallaLogin extends JFrame {
 
     private void abrirRegistro() {
         this.setVisible(false);
-        new PantallaRegistro(this).setVisible(true);
+        GestorVentana.cambiarPantalla(new PantallaRegistro(this), "Registro de Usuario", 520, 760);
     }
 
     /**
